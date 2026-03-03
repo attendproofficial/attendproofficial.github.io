@@ -27,18 +27,8 @@ body{
 }
 
 .logo{
-    width:70px;
+    width:80px;
     margin-bottom:10px;
-}
-
-h2{
-    margin:5px 0;
-}
-
-.subtitle{
-    font-size:13px;
-    opacity:0.8;
-    margin-bottom:15px;
 }
 
 select,input{
@@ -102,8 +92,10 @@ button{
 
 <div class="container">
 
-<!-- 🔵 DTU LOGO (Public link) -->
-<img class="logo" src="https://upload.wikimedia.org/wikipedia/en/9/9d/Delhi_Technological_University_logo.png">
+<!-- ✅ Fixed DTU Logo (SVG Reliable Link) -->
+<img class="logo" 
+src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9d/Delhi_Technological_University_logo.png/200px-Delhi_Technological_University_logo.png"
+alt="DTU Logo">
 
 <h2>AttendPro</h2>
 <div class="subtitle">Attendance System only for DTU CE SEC-1</div>
@@ -146,6 +138,22 @@ Subject summary will appear here.
 // 🔵 Semester Start
 const semesterStart = new Date("2026-01-05");
 
+// 🔵 HOLIDAYS (Add more from academic calendar)
+const holidays = [
+"2026-01-26", // Republic Day
+"2026-03-06", // Example Holiday
+"2026-03-07"
+];
+
+// 🔵 EXAM DAYS (No classes counted)
+const examDays = [
+"2026-03-15",
+"2026-03-16",
+"2026-03-17",
+"2026-03-18",
+"2026-03-19"
+];
+
 // 🔵 Timetable
 const timetable = {
 1:{MOS:2,CO:2},
@@ -159,6 +167,11 @@ function checkTutorial(){
 let subject=document.getElementById("subject").value;
 document.getElementById("tutorialOption").style.display=
 (subject==="Maths"||subject==="Stats")?"block":"none";
+}
+
+function isSpecialDay(date, list){
+let d=date.toISOString().split("T")[0];
+return list.includes(d);
 }
 
 function calculate(){
@@ -179,12 +192,22 @@ let totalClasses=0;
 for(let d=new Date(semesterStart);d<=today;d.setDate(d.getDate()+1)){
 
 let day=d.getDay();
+
+// Skip weekends
 if(day===0||day===6) continue;
 
+// ✅ Skip Holidays
+if(isSpecialDay(d, holidays)) continue;
+
+// ✅ Skip Exam Days
+if(isSpecialDay(d, examDays)) continue;
+
+// Count classes
 if(timetable[day] && timetable[day][subject]){
 totalClasses+=timetable[day][subject];
 }
 
+// Tutorial
 if((subject==="Maths"||subject==="Stats") && tutorial==="yes"){
 if(day===3) totalClasses+=1;
 }
@@ -196,7 +219,7 @@ if(attended<0) attended=0;
 let percentage=(totalClasses>0)?
 ((attended/totalClasses)*100).toFixed(1):0;
 
-// 🔵 Animate Circular Progress
+// Animate Circle
 let circle=document.getElementById("progressCircle");
 let text=document.getElementById("progressText");
 
@@ -206,7 +229,7 @@ circle.style.background=
 
 text.innerText=percentage+"%";
 
-// 🔵 Dashboard Summary
+// Dashboard
 let maxLeaves=Math.floor(totalClasses*0.25);
 let moreBunk=maxLeaves-leaves;
 
