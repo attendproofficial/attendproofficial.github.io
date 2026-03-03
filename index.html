@@ -1,203 +1,220 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>AttendPro - DTU CE SEC-1</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>AttendPro | DTU CE SEC-1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: white;
-        }
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#141e30,#243b55);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    color:white;
+}
 
-        .card {
-            background: rgba(255,255,255,0.1);
-            padding: 30px;
-            border-radius: 15px;
-            width: 380px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-        }
+.container{
+    width:420px;
+    background:rgba(255,255,255,0.08);
+    padding:25px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 15px 40px rgba(0,0,0,0.4);
+}
 
-        h2 {
-            margin-bottom: 5px;
-        }
+.logo{
+    width:70px;
+    margin-bottom:10px;
+}
 
-        .subtitle {
-            font-size: 13px;
-            opacity: 0.9;
-            margin-bottom: 20px;
-        }
+h2{
+    margin:5px 0;
+}
 
-        select, input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 8px;
-            border: none;
-            font-size: 14px;
-        }
+.subtitle{
+    font-size:13px;
+    opacity:0.8;
+    margin-bottom:15px;
+}
 
-        button {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            background: white;
-            color: #1e3c72;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+select,input{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border-radius:8px;
+    border:none;
+}
 
-        button:hover {
-            background: #f0f0f0;
-        }
+button{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:#00c6ff;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
 
-        #result {
-            margin-top: 15px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
+.progress-container{
+    margin:20px auto;
+    width:150px;
+    height:150px;
+    position:relative;
+}
 
-        #tutorialOption {
-            display: none;
-        }
+.progress-circle{
+    width:150px;
+    height:150px;
+    border-radius:50%;
+    background:conic-gradient(#00ffcc 0deg, #444 0deg);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
 
-        .footer-note {
-            margin-top: 15px;
-            font-size: 12px;
-            opacity: 0.8;
-        }
-    </style>
+.progress-circle span{
+    position:absolute;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.dashboard{
+    margin-top:15px;
+    font-size:14px;
+    text-align:left;
+    background:rgba(255,255,255,0.05);
+    padding:10px;
+    border-radius:10px;
+}
+
+#tutorialOption{
+    display:none;
+}
+</style>
 </head>
 
 <body>
 
-<div class="card">
-    <h2>📊 AttendPro</h2>
-    <div class="subtitle">Attendance System only for DTU CE SEC-1</div>
+<div class="container">
 
-    <select id="subject" onchange="checkTutorial()">
-        <option value="">Select Subject</option>
-        <option value="CO">CO</option>
-        <option value="Maths">Maths</option>
-        <option value="Stats">Stats</option>
-        <option value="VAC">VAC</option>
-        <option value="Graphics">Graphics</option>
-        <option value="MOS">MOS</option>
-    </select>
+<!-- 🔵 DTU LOGO (Public link) -->
+<img class="logo" src="https://upload.wikimedia.org/wikipedia/en/9/9d/Delhi_Technological_University_logo.png">
 
-    <div id="tutorialOption">
-        <select id="tutorial">
-            <option value="no">Exclude Tutorial</option>
-            <option value="yes">Include Tutorial</option>
-        </select>
-    </div>
+<h2>AttendPro</h2>
+<div class="subtitle">Attendance System only for DTU CE SEC-1</div>
 
-    <input type="number" id="leaves" placeholder="Total Leaves Taken">
+<select id="subject" onchange="checkTutorial()">
+<option value="">Select Subject</option>
+<option value="CO">CO</option>
+<option value="Maths">Maths</option>
+<option value="Stats">Stats</option>
+<option value="VAC">VAC</option>
+<option value="Graphics">Graphics</option>
+<option value="MOS">MOS</option>
+</select>
 
-    <button onclick="calculate()">Calculate Attendance</button>
+<div id="tutorialOption">
+<select id="tutorial">
+<option value="no">Exclude Tutorial</option>
+<option value="yes">Include Tutorial</option>
+</select>
+</div>
 
-    <div id="result"></div>
+<input type="number" id="leaves" placeholder="Total Leaves Taken">
 
-    <div class="footer-note">
-        Developed for DTU CE SEC-1 | Even Semester
-    </div>
+<button onclick="calculate()">Calculate Attendance</button>
+
+<div class="progress-container">
+<div class="progress-circle" id="progressCircle">
+<span id="progressText">0%</span>
+</div>
+</div>
+
+<div class="dashboard" id="dashboard">
+Subject summary will appear here.
+</div>
+
 </div>
 
 <script>
 
-// 🔴 SET SEMESTER START DATE
+// 🔵 Semester Start
 const semesterStart = new Date("2026-01-05");
 
-// 🔴 EXAM PERIOD (NO CLASSES)
-const examStart = new Date("2026-04-20");
-const examEnd = new Date("2026-05-05");
-
-// 🔴 HOLIDAYS (ADD MORE IF NEEDED)
-const holidays = [
-    new Date("2026-01-26")
-];
-
-// 📌 TIMETABLE MAPPING
+// 🔵 Timetable
 const timetable = {
-    1: { MOS: 2, CO: 2 },                 // Monday
-    2: { Graphics: 1 },                   // Tuesday
-    3: { Stats: 1, Maths: 2, MOS: 1 },    // Wednesday
-    4: { Stats: 2, Maths: 1, VAC: 2 },    // Thursday
-    5: { CO: 1, Stats: 1 }                // Friday
+1:{MOS:2,CO:2},
+2:{Graphics:1},
+3:{Stats:1,Maths:2,MOS:1},
+4:{Stats:2,Maths:1,VAC:2},
+5:{CO:1,Stats:1}
 };
 
-function checkTutorial() {
-    let subject = document.getElementById("subject").value;
-    document.getElementById("tutorialOption").style.display =
-        (subject === "Maths" || subject === "Stats") ? "block" : "none";
+function checkTutorial(){
+let subject=document.getElementById("subject").value;
+document.getElementById("tutorialOption").style.display=
+(subject==="Maths"||subject==="Stats")?"block":"none";
 }
 
-function calculate() {
+function calculate(){
 
-    let subject = document.getElementById("subject").value;
-    let leaves = parseInt(document.getElementById("leaves").value);
-    let tutorial = document.getElementById("tutorial").value;
+let subject=document.getElementById("subject").value;
+let leaves=parseInt(document.getElementById("leaves").value);
+let tutorial=document.getElementById("tutorial").value;
 
-    if (!subject || isNaN(leaves) || leaves < 0) {
-        document.getElementById("result").innerHTML = "⚠ Please enter valid details.";
-        return;
-    }
+if(!subject||isNaN(leaves)||leaves<0){
+alert("Enter valid details");
+return;
+}
 
-    let today = new Date();
-    let totalClasses = 0;
+let today=new Date();
+let totalClasses=0;
 
-    for (let d = new Date(semesterStart); d <= today; d.setDate(d.getDate() + 1)) {
+for(let d=new Date(semesterStart);d<=today;d.setDate(d.getDate()+1)){
 
-        let day = d.getDay(); // 0=Sun
+let day=d.getDay();
+if(day===0||day===6) continue;
 
-        let isExam = (d >= examStart && d <= examEnd);
-        let isHoliday = holidays.some(h => h.toDateString() === d.toDateString());
+if(timetable[day] && timetable[day][subject]){
+totalClasses+=timetable[day][subject];
+}
 
-        if (day === 0 || day === 6 || isExam || isHoliday) continue;
+if((subject==="Maths"||subject==="Stats") && tutorial==="yes"){
+if(day===3) totalClasses+=1;
+}
+}
 
-        if (timetable[day] && timetable[day][subject]) {
-            totalClasses += timetable[day][subject];
-        }
+let attended=totalClasses-leaves;
+if(attended<0) attended=0;
 
-        // Tutorial counted once weekly (Wednesday assumed)
-        if ((subject === "Maths" || subject === "Stats") && tutorial === "yes") {
-            if (day === 3) totalClasses += 1;
-        }
-    }
+let percentage=(totalClasses>0)?
+((attended/totalClasses)*100).toFixed(1):0;
 
-    let attended = totalClasses - leaves;
-    if (attended < 0) attended = 0;
+// 🔵 Animate Circular Progress
+let circle=document.getElementById("progressCircle");
+let text=document.getElementById("progressText");
 
-    let percentage = totalClasses > 0
-        ? ((attended / totalClasses) * 100).toFixed(2)
-        : 0;
+let deg=percentage*3.6;
+circle.style.background=
+`conic-gradient(#00ffcc ${deg}deg,#444 ${deg}deg)`;
 
-    let maxLeavesAllowed = Math.floor(totalClasses * 0.25);
-    let moreBunk = maxLeavesAllowed - leaves;
+text.innerText=percentage+"%";
 
-    let message = `
-        📚 Total Classes: ${totalClasses} <br>
-        📈 Attendance: ${percentage}% <br><br>
-    `;
+// 🔵 Dashboard Summary
+let maxLeaves=Math.floor(totalClasses*0.25);
+let moreBunk=maxLeaves-leaves;
 
-    if (percentage >= 75) {
-        message += `✅ Safe Attendance <br>
-        You can bunk <b>${moreBunk >= 0 ? moreBunk : 0}</b> more classes safely.`;
-    } else {
-        message += `⚠ Attendance Shortage!`;
-    }
-
-    document.getElementById("result").innerHTML = message;
+document.getElementById("dashboard").innerHTML=`
+<b>Total Classes:</b> ${totalClasses}<br>
+<b>Attended:</b> ${attended}<br>
+<b>Leaves Taken:</b> ${leaves}<br>
+<b>Safe Bunks Left:</b> ${moreBunk>=0?moreBunk:0}
+`;
 }
 
 </script>
