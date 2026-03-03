@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AttendPro - DTU CE SEC-1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            width: 380px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: white;
+            color: #1e3c72;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #f0f0f0;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        #tutorialOption {
+            display: none;
+        }
+
+        .footer-note {
+            margin-top: 15px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>📊 AttendPro</h2>
+    <div class="subtitle">Attendance System only for DTU CE SEC-1</div>
+
+    <select id="subject" onchange="checkTutorial()">
+        <option value="">Select Subject</option>
+        <option value="CO">CO</option>
+        <option value="Maths">Maths</option>
+        <option value="Stats">Stats</option>
+        <option value="VAC">VAC</option>
+        <option value="Graphics">Graphics</option>
+        <option value="MOS">MOS</option>
+    </select>
+
+    <div id="tutorialOption">
+        <select id="tutorial">
+            <option value="no">Exclude Tutorial</option>
+            <option value="yes">Include Tutorial</option>
+        </select>
+    </div>
+
+    <input type="number" id="leaves" placeholder="Total Leaves Taken">
+
+    <button onclick="calculate()">Calculate Attendance</button>
+
+    <div id="result"></div>
+
+    <div class="footer-note">
+        Developed for DTU CE SEC-1 | Even Semester
+    </div>
+</div>
+
+<script>
+
+// 🔴 SET SEMESTER START DATE
+const semesterStart = new Date("2026-01-08");
+
+// 🔴 EXAM PERIOD (NO CLASSES)
+const examStart = new Date("2026-04-20");
+const examEnd = new Date("2026-05-05");
+
+// 🔴 HOLIDAYS (ADD MORE IF NEEDED)
+const holidays = [
+    new Date("2026-01-26")
+];
+
+// 📌 TIMETABLE MAPPING
+const timetable = {
+    1: { MOS: 2, CO: 2 },                 // Monday
+    2: { Graphics: 1 },                   // Tuesday
+    3: { Stats: 1, Maths: 2, MOS: 1 },    // Wednesday
+    4: { Stats: 2, Maths: 1, VAC: 2 },    // Thursday
+    5: { CO: 1, Stats: 1 }                // Friday
+};
+
+function checkTutorial() {
+    let subject = document.getElementById("subject").value;
+    document.getElementById("tutorialOption").style.display =
+        (subject === "Maths" || subject === "Stats") ? "block" : "none";
+}
+
+function calculate() {
+
+    let subject = document.getElementById("subject").value;
+    let leaves = parseInt(document.getElementById("leaves").value);
+    let tutorial = document.getElementById("tutorial").value;
+
+    if (!subject || isNaN(leaves) || leaves < 0) {
+        document.getElementById("result").innerHTML = "⚠ Please enter valid details.";
+        return;
+    }
+
+    let today = new Date();
+    let totalClasses = 0;
+
+    for (let d = new Date(semesterStart); d <= today; d.setDate(d.getDate() + 1)) {
+
+        let day = d.getDay(); // 0=Sun
+
+        let isExam = (d >= examStart && d <= examEnd);
+        let isHoliday = holidays.some(h => h.toDateString() === d.toDateString());
+
+        if (day === 0 || day === 6 || isExam || isHoliday) continue;
+
+        if (timetable[day] && timetable[day][subject]) {
+            totalClasses += timetable[day][subject];
+        }
+
+        // Tutorial counted once weekly (Wednesday assumed)
+        if ((subject === "Maths" || subject === "Stats") && tutorial === "yes") {
+            if (day === 3) totalClasses += 1;
+        }
+    }
+
+    let attended = totalClasses - leaves;
+    if (attended < 0) attended = 0;
+
+    let percentage = totalClasses > 0
+        ? ((attended / totalClasses) * 100).toFixed(2)
+        : 0;
+
+    let maxLeavesAllowed = Math.floor(totalClasses * 0.25);
+    let moreBunk = maxLeavesAllowed - leaves;
+
+    let message = `
+        📚 Total Classes: ${totalClasses} <br>
+        📈 Attendance: ${percentage}% <br><br>
+    `;
+
+    if (percentage >= 75) {
+        message += `✅ Safe Attendance <br>
+        You can bunk <b>${moreBunk >= 0 ? moreBunk : 0}</b> more classes safely.`;
+    } else {
+        message += `⚠ Attendance Shortage!`;
+    }
+
+    document.getElementById("result").innerHTML = message;
+}
+
+</script>
+
+</body>
+</html>
